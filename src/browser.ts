@@ -1,14 +1,15 @@
 import puppeteer from '@cloudflare/puppeteer';
-import { clickCmp } from 'puppeteer-cmp-clicker';
 import { DurableObject } from 'cloudflare:workers';
+import { clickCmp } from 'puppeteer-cmp-clicker';
 
-const ALIVE_TIME = 60 * 10; //10 mins
+const ALIVE_TIME = 60 * 1; //1 min
 
 export class BrowserController extends DurableObject {
 	env: Env;
 	storage: any;
 	browser: any;
 	timer: number;
+
 	constructor(ctx: any, env: Env) {
 		super(ctx, env);
 		this.ctx = ctx;
@@ -24,7 +25,7 @@ export class BrowserController extends DurableObject {
 		if (!this.browser || !this.browser.isConnected()) {
 			console.log(`starting new browser instance`);
 			try {
-				this.browser = await puppeteer.launch(this.env.BROWSER, { keep_alive: 60 * 10 * 1000 }); //10 mins
+				this.browser = await puppeteer.launch(this.env.BROWSER, { keep_alive: ALIVE_TIME * 1000 });
 			} catch (e) {
 				console.log(e);
 			}
@@ -33,6 +34,7 @@ export class BrowserController extends DurableObject {
 		//render article
 		const page = await this.browser.newPage();
 		await page.goto(url, { waitUntil: 'networkidle2' });
+
 		await clickCmp({ page });
 
 		const pdf = await page.pdf({

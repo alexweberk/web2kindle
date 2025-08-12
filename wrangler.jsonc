@@ -1,0 +1,47 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "web2kindle",
+	"main": "src/index.ts",
+	"compatibility_date": "2025-01-24",
+	"compatibility_flags": ["nodejs_compat"],
+	"vars": {
+		"FROM_EMAIL": "no-reply@mail.jumonai.com"
+	},
+	"assets": {
+		"binding": "ASSETS",
+		"directory": "./public"
+	},
+	"observability": {
+		"enabled": true
+	},
+	"browser": {
+		"binding": "BROWSER"
+	},
+	"kv_namespaces": [
+		{
+			"binding": "ARTICLE_CACHE",
+			"id": "b6e73c8d009c4a06b539adf549588ae1"
+		}
+	],
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "BROWSER_CONTROLLER",
+				"class_name": "BrowserController"
+			}
+		]
+	},
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_classes": ["BrowserController"]
+		}
+	],
+	"workflows": [
+		{
+			"name": "web2kindle",
+			"binding": "WORKFLOW",
+			"class_name": "Workflow"
+		}
+	]
+}

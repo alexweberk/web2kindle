@@ -1,5 +1,5 @@
-import { CreateEmailResponseSuccess, ErrorResponse, Resend } from 'resend';
 import slugify from '@sindresorhus/slugify';
+import { CreateEmailResponseSuccess, ErrorResponse, Resend } from 'resend';
 
 interface EmailStatus {
 	data: CreateEmailResponseSuccess | null;
@@ -7,6 +7,13 @@ interface EmailStatus {
 }
 
 export default async function send(env: Env, email: string, article: ArrayBuffer, url: string): Promise<EmailStatus> {
+	if (!env.RESEND_KEY) {
+		throw new Error('RESEND_KEY is not set');
+	}
+	if (!env.FROM_EMAIL) {
+		throw new Error('FROM_EMAIL is not set');
+	}
+
 	const resend = new Resend(env.RESEND_KEY);
 	return resend.emails.send({
 		from: env.FROM_EMAIL,
